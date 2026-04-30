@@ -21,7 +21,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const todayStr = new Date().toDateString();
     const stored = localStorage.getItem("smartlead_daily_stats");
-    
+                
     if (stored) {
       try {
         const parsed = JSON.parse(stored);

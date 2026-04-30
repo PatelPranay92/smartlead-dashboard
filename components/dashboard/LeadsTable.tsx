@@ -182,11 +182,10 @@ export default function LeadsTable() {
             <button
               key={i}
               onClick={() => setPage(i)}
-              className={`w-7 h-7 text-xs rounded-lg transition-colors ${
-                i === page
+              className={`w-7 h-7 text-xs rounded-lg transition-colors ${i === page
                   ? "bg-indigo-600 text-white"
                   : "text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800"
-              }`}
+                }`}
               aria-label={`Page ${i + 1}`}
               aria-current={i === page ? "page" : undefined}
             >
