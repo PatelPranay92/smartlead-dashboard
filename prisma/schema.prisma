@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Lead {
+  id                Int      @id @default(autoincrement())
+  customerName      String?  @map("customer_name")
+  phoneNumber       String?  @unique @map("phone_number")
+  productName       String?  @map("product_name")
+  city              String?
+  budget            String?
+  quantity          Int?     @default(1)
+  leadSource        String?  @default("SmartLead") @map("lead_source")
+  callStatus        String?  @default("New Lead") @map("call_status")
+  dealStatus        String?  @default("Open") @map("deal_status")
+  callStartTime     String?  @map("call_start_time")
+  callEndTime       String?  @map("call_end_time")
+  callDuration      String?  @map("call_duration")
+  callRecordingLink String?  @map("call_recording_link")
+  notes             String?  @db.Text
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  @@map("leads")
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  name      String   @default("Admin")
+  email     String   @unique @default("admin@smartlead.com")
+  password  String   @default("admin")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("admins")
+}
+
+
