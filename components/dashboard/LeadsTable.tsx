@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { leads as initialLeads } from "@/lib/mock-data";
 import { Badge, getCallStatusVariant, getDealStatusVariant, getSourceVariant } from "@/components/ui/Badge";
@@ -14,6 +14,13 @@ export default function LeadsTable() {
   const [localLeads, setLocalLeads] = useState(initialLeads);
   const [page, setPage] = useState(0);
   const { toast } = useToast();
+  const tableRef = useRef<HTMLDivElement>(null);
+
+  const changePage = (next: number | ((p: number) => number)) => {
+    setPage(next);
+    // Scroll the table card into view instead of letting the browser jump to top
+    tableRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  };
 
   const totalPages = Math.ceil(localLeads.length / PAGE_SIZE);
   // Ensure page is within bounds after a deletion might reduce total pages
@@ -36,6 +43,7 @@ export default function LeadsTable() {
   };
 
   return (
+    <div ref={tableRef}>
     <Card className="p-0 overflow-hidden">
       <div className="px-5 pt-5 pb-4 border-b border-gray-100 dark:border-gray-800">
         <CardHeader className="mb-0">
@@ -171,7 +179,7 @@ export default function LeadsTable() {
         </p>
         <div className="flex items-center gap-1">
           <button
-            onClick={() => setPage(p => Math.max(0, p - 1))}
+            onClick={() => changePage(p => Math.max(0, p - 1))}
             disabled={page === 0}
             className="p-1.5 rounded-lg border border-gray-200 dark:border-gray-700 disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
             aria-label="Previous page"
@@ -181,7 +189,7 @@ export default function LeadsTable() {
           {Array.from({ length: totalPages }).map((_, i) => (
             <button
               key={i}
-              onClick={() => setPage(i)}
+              onClick={() => changePage(i)}
               className={`w-7 h-7 text-xs rounded-lg transition-colors ${i === page
                   ? "bg-indigo-600 text-white"
                   : "text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800"
@@ -193,7 +201,7 @@ export default function LeadsTable() {
             </button>
           ))}
           <button
-            onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+            onClick={() => changePage(p => Math.min(totalPages - 1, p + 1))}
             disabled={page === totalPages - 1}
             className="p-1.5 rounded-lg border border-gray-200 dark:border-gray-700 disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
             aria-label="Next page"
@@ -203,6 +211,7 @@ export default function LeadsTable() {
         </div>
       </div>
     </Card>
+    </div>
   );
 }
 
