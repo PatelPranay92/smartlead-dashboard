@@ -28,7 +28,7 @@ export default function LeadsTable() {
         if (!res.ok) throw new Error(`Server error: ${res.status}`);
         const data = await res.json();
         const rawLeads = data.leads || [];
-        
+
         // Map backend snake_case to frontend camelCase
         const normalizedLeads: Lead[] = rawLeads.map((l: any) => ({
           id: l.id,
@@ -253,11 +253,10 @@ export default function LeadsTable() {
                   <button
                     key={i}
                     onClick={() => changePage(i)}
-                    className={`w-7 h-7 text-xs rounded-lg transition-colors ${
-                      i === page
+                    className={`w-7 h-7 text-xs rounded-lg transition-colors ${i === page
                         ? "bg-indigo-600 text-white"
                         : "text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800"
-                    }`}
+                      }`}
                     aria-label={`Page ${i + 1}`}
                     aria-current={i === page ? "page" : undefined}
                   >

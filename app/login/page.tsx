@@ -13,17 +13,29 @@ export default function LoginPage() {
   const [email, setEmail] = useState("admin@smartlead.com");
   const [password, setPassword] = useState("admin");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (email !== "admin@smartlead.com" || password !== "admin") {
       toast("Invalid email or password. Hint: admin@smartlead.com / admin");
       return;
     }
 
     setLoading(true);
-    
-    // Simulate login delay
+
+    // We create a valid-looking JWT for testing purposes
+    const mockHeader = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" }));
+    const mockPayload = btoa(JSON.stringify({
+      sub: email,
+      role: "admin",
+      exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24) // 24 hours
+    }));
+    const mockSignature = "simulated_signature_hash_987654321";
+    const jwtToken = `${mockHeader}.${mockPayload}.${mockSignature}`;
+
+    localStorage.setItem("token", jwtToken);
+
+    // Simulate network delay
     setTimeout(() => {
       setLoading(false);
       toast("Successfully logged in!");
@@ -139,11 +151,11 @@ export default function LoginPage() {
       <div className="hidden lg:block relative w-0 flex-1 overflow-hidden bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-800">
         <div className="absolute inset-0 w-full h-full p-12 flex flex-col justify-between">
           <div className="absolute inset-0 z-0">
-             {/* Abstract background elements */}
+            {/* Abstract background elements */}
             <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-400/20 blur-[100px]" />
             <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-violet-400/20 blur-[100px]" />
           </div>
-          
+
           <div className="relative z-10">
             <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
               Supercharge your sales team.
@@ -154,17 +166,17 @@ export default function LoginPage() {
           </div>
 
           <div className="relative z-10 w-full max-w-3xl ml-auto mt-12 bg-white/50 dark:bg-gray-950/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 dark:border-gray-800/50 p-6 overflow-hidden">
-             {/* Mock Dashboard Preview */}
-             <div className="flex items-center gap-4 mb-6">
-                <div className="h-8 w-32 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse" />
-                <div className="h-8 w-8 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse ml-auto" />
-             </div>
-             <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="h-24 bg-gray-200 dark:bg-gray-800 rounded-xl animate-pulse" />
-                <div className="h-24 bg-gray-200 dark:bg-gray-800 rounded-xl animate-pulse" />
-                <div className="h-24 bg-gray-200 dark:bg-gray-800 rounded-xl animate-pulse" />
-             </div>
-             <div className="h-48 bg-gray-200 dark:bg-gray-800 rounded-xl animate-pulse" />
+            {/* Mock Dashboard Preview */}
+            <div className="flex items-center gap-4 mb-6">
+              <div className="h-8 w-32 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse" />
+              <div className="h-8 w-8 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse ml-auto" />
+            </div>
+            <div className="grid grid-cols-3 gap-4 mb-6">
+              <div className="h-24 bg-gray-200 dark:bg-gray-800 rounded-xl animate-pulse" />
+              <div className="h-24 bg-gray-200 dark:bg-gray-800 rounded-xl animate-pulse" />
+              <div className="h-24 bg-gray-200 dark:bg-gray-800 rounded-xl animate-pulse" />
+            </div>
+            <div className="h-48 bg-gray-200 dark:bg-gray-800 rounded-xl animate-pulse" />
           </div>
         </div>
       </div>

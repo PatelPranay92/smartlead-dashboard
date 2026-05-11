@@ -11,6 +11,11 @@ interface LayoutContextType {
   toggleDark: () => void;
   mobileMenuOpen: boolean;
   setMobileMenuOpen: (v: boolean) => void;
+  userName: string;
+  setUserName: (v: string) => void;
+  userAvatar: string | null;
+  setUserAvatar: (v: string | null) => void;
+  isMounted: boolean;
 }
 
 export const LayoutContext = createContext<LayoutContextType>({
@@ -20,6 +25,11 @@ export const LayoutContext = createContext<LayoutContextType>({
   toggleDark: () => {},
   mobileMenuOpen: false,
   setMobileMenuOpen: () => {},
+  userName: "Admin",
+  setUserName: () => {},
+  userAvatar: null,
+  setUserAvatar: () => {},
+  isMounted: false,
 });
 
 export const useLayout = () => useContext(LayoutContext);
@@ -32,13 +42,52 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [isDark, setIsDark] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userName, setUserNameState] = useState("Admin");
+  const [userAvatar, setUserAvatarState] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
   const pathname = usePathname();
 
   // Load theme preference on mount
   useEffect(() => {
-    const isDarkMode = document.documentElement.classList.contains("dark");
-    setIsDark(isDarkMode);
+    try {
+      const isDarkMode = document.documentElement.classList.contains("dark");
+      setIsDark(isDarkMode);
+
+      const storedName = localStorage.getItem("userName");
+      if (storedName) {
+        setUserNameState(storedName);
+      }
+
+      const storedAvatar = localStorage.getItem("userAvatar");
+      if (storedAvatar) {
+        // Prevent massive base64 strings from crashing React DevTools or exceeding quota
+        if (storedAvatar.length > 2000000) {
+          localStorage.removeItem("userAvatar");
+          console.warn("Avatar too large, removed from localStorage.");
+        } else {
+          setUserAvatarState(storedAvatar);
+        }
+      }
+      setIsMounted(true);
+    } catch (error) {
+      console.error("Error accessing localStorage", error);
+      setIsMounted(true);
+    }
   }, []);
+
+  const setUserName = (name: string) => {
+    setUserNameState(name);
+    localStorage.setItem("userName", name);
+  };
+
+  const setUserAvatar = (avatar: string | null) => {
+    setUserAvatarState(avatar);
+    if (avatar) {
+      localStorage.setItem("userAvatar", avatar);
+    } else {
+      localStorage.removeItem("userAvatar");
+    }
+  };
 
   const toggleDark = () => {
     setIsDark((prev) => {
@@ -57,7 +106,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const isAuthPage = pathname === "/login" || pathname === "/forgot-password";
 
   return (
-    <LayoutContext.Provider value={{ sidebarCollapsed, setSidebarCollapsed, isDark, toggleDark, mobileMenuOpen, setMobileMenuOpen }}>
+    <LayoutContext.Provider value={{ sidebarCollapsed, setSidebarCollapsed, isDark, toggleDark, mobileMenuOpen, setMobileMenuOpen, userName, setUserName, userAvatar, setUserAvatar, isMounted }}>
       <ToastProvider>
         {isAuthPage ? (
           <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300">

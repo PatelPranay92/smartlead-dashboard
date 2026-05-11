@@ -13,7 +13,7 @@ interface NavbarProps {
 
 export default function Navbar({ isDark, onToggleDark }: NavbarProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { setMobileMenuOpen } = useLayout();
+  const { setMobileMenuOpen, userName, userAvatar, isMounted } = useLayout();
 
   return (
     <header className="sticky top-0 z-30 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 h-16 flex items-center px-4 md:px-6 gap-2 md:gap-4 shadow-sm">
@@ -43,11 +43,15 @@ export default function Navbar({ isDark, onToggleDark }: NavbarProps) {
             aria-haspopup="true"
             aria-expanded={dropdownOpen}
           >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-xs font-bold shadow-sm">
-              A
+            <div className={`w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-xs font-bold shadow-sm overflow-hidden transition-opacity duration-300 ${isMounted ? "opacity-100" : "opacity-0"}`}>
+              {userAvatar ? (
+                <img src={userAvatar} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                userName.charAt(0).toUpperCase()
+              )}
             </div>
-            <div className="hidden sm:block text-left">
-              <p className="text-sm font-semibold text-gray-900 dark:text-white leading-none">Admin Patel</p>
+            <div className={`hidden sm:block text-left transition-opacity duration-300 ${isMounted ? "opacity-100" : "opacity-0"}`}>
+              <p className="text-sm font-semibold text-gray-900 dark:text-white leading-none">{userName}</p>
               <p className="text-xs text-gray-500 dark:text-gray-400">Admin</p>
             </div>
             <ChevronDown className={cn("w-3.5 h-3.5 text-gray-400 transition-transform", dropdownOpen && "rotate-180")} />
@@ -56,15 +60,8 @@ export default function Navbar({ isDark, onToggleDark }: NavbarProps) {
           {dropdownOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-xl z-50 overflow-hidden animate-in fade-in-0 slide-in-from-top-2">
               <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
-                <p className="text-sm font-semibold text-gray-900 dark:text-white">Admin</p>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">{userName}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">Admin@smartlead.com</p>
-              </div>
-              <div className="py-2">
-
-                <Link href="/login" className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
-                  <LogOut className="w-4 h-4" />
-                  Sign out
-                </Link>
               </div>
             </div>
           )}
