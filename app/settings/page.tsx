@@ -11,6 +11,7 @@ export default function ProfileSettingsPage() {
   const { toast } = useToast();
   const { userName, setUserName, userAvatar, setUserAvatar, isMounted } = useLayout();
   const [localName, setLocalName] = useState(userName);
+  const [localEmail, setLocalEmail] = useState("Admin@smartlead.com");
   const [localAvatar, setLocalAvatar] = useState<string | null>(userAvatar);
   const [loading, setLoading] = useState(false);
 
@@ -77,7 +78,7 @@ export default function ProfileSettingsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-4 mb-6">
-            <div className={`w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-xl font-bold shadow-md overflow-hidden relative group transition-opacity duration-300 ${isMounted ? "opacity-100" : "opacity-0"}`}>
+            <div className={`w-16 h-16 rounded-full bg-linear-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-xl font-bold shadow-md overflow-hidden relative group transition-opacity duration-300 ${isMounted ? "opacity-100" : "opacity-0"}`}>
               {localAvatar ? (
                 <img src={localAvatar} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
@@ -115,9 +116,9 @@ export default function ProfileSettingsPage() {
               <label className="text-xs font-semibold text-gray-600 dark:text-gray-400">Email Address</label>
               <input
                 type="email"
-                defaultValue="Admin@smartlead.com"
-                className="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-                disabled
+                value={localEmail}
+                onChange={(e) => setLocalEmail(e.target.value)}
+                className="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
               />
             </div>
             <div className="space-y-1.5 sm:col-span-2">
